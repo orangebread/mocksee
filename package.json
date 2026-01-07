@@ -8,7 +8,8 @@
         "typecheck": "pnpm -r typecheck",
         "dev:react": "pnpm --filter react-demo dev",
         "dev:vue": "pnpm --filter vue-demo dev",
-        "dev:angular": "pnpm --filter angular-demo dev"
+        "dev:angular": "pnpm --filter angular-demo dev",
+        "publish:all": "pnpm build && pnpm -r publish --access public"
     },
     "devDependencies": {
         "typescript": "^5.0.0"
