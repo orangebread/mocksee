@@ -6,6 +6,11 @@ import * as React from "react"
 export type MockMarkVariant = "border" | "badge" | "minimal"
 
 /**
+ * Tooltip trigger mode - hover shows on hover anywhere, click only triggers on label click
+ */
+export type TooltipTrigger = "hover" | "click"
+
+/**
  * Theme configuration for MockMark styling
  */
 export interface MockMarkTheme {
@@ -17,6 +22,12 @@ export interface MockMarkTheme {
     labelColor?: string
     /** Font size for the label */
     labelFontSize?: string
+    /** Background color for the tooltip */
+    tooltipBg?: string
+    /** Text color for the tooltip */
+    tooltipColor?: string
+    /** Font size for the tooltip text */
+    tooltipFontSize?: string
 }
 
 /**
@@ -29,6 +40,8 @@ export interface MockMarkConfig {
     defaultVariant?: MockMarkVariant
     /** Theme customization */
     theme?: MockMarkTheme
+    /** How to trigger tooltip: "hover" (default) or "click" (click only applies to label) */
+    tooltipTrigger?: TooltipTrigger
 }
 
 /**
@@ -37,9 +50,9 @@ export interface MockMarkConfig {
 export interface MockMarkProps {
     /** Label displayed on the indicator badge */
     label?: string
-    /** Reason/description shown on hover (tooltip) */
+    /** Reason/description shown in tooltip */
     reason?: string
-    /** Alias for reason - description shown on hover */
+    /** Alias for reason - description shown in tooltip */
     description?: string
     /** Visual style variant */
     variant?: MockMarkVariant
@@ -54,6 +67,12 @@ export interface MockMarkProps {
 }
 
 /**
- * Context value type
+ * Context value type with required fields + defaults
  */
-export type MockMarkContextValue = Required<MockMarkConfig>
+export interface MockMarkContextValue {
+    enabled: boolean
+    defaultVariant: MockMarkVariant
+    theme: Required<MockMarkTheme>
+    tooltipTrigger: TooltipTrigger
+}
+

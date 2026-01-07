@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-examples/node_modules/
+example/node_modules/
 
 # Build output (tsup generates dist/)
 dist/

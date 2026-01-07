@@ -33,7 +33,8 @@ export function MockMark({
     const config = useMockMark()
     const resolvedVariant = variant ?? config.defaultVariant
     const theme = mergeTheme(config.theme)
-    const tooltip = reason ?? description
+    const tooltipText = reason ?? description
+    const [tooltipVisible, setTooltipVisible] = React.useState(false)
 
     // Early return if disabled globally or locally
     if (!config.enabled || disabled) {
@@ -81,15 +82,106 @@ export function MockMark({
         textTransform: "uppercase" as const,
         letterSpacing: "0.05em",
         zIndex: 50,
-        pointerEvents: "none" as const,
         userSelect: "none" as const,
         fontFamily: "system-ui, -apple-system, sans-serif",
         lineHeight: 1.2,
+        // Make clickable when in click mode
+        cursor: config.tooltipTrigger === "click" && tooltipText ? "pointer" : "default",
+        pointerEvents: config.tooltipTrigger === "click" ? "auto" : "none",
     }
 
+    const tooltipStyle: React.CSSProperties = {
+        position: "absolute",
+        top: "100%",
+        left: resolvedVariant === "minimal" ? "0" : "8px",
+        marginTop: "6px",
+        backgroundColor: theme.tooltipBg,
+        color: theme.tooltipColor,
+        fontSize: theme.tooltipFontSize,
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)",
+        whiteSpace: "nowrap",
+        zIndex: 100,
+        opacity: tooltipVisible ? 1 : 0,
+        visibility: tooltipVisible ? "visible" : "hidden",
+        transform: tooltipVisible ? "translateY(0)" : "translateY(-4px)",
+        transition: "opacity 150ms ease, transform 150ms ease, visibility 150ms",
+        pointerEvents: "none" as const,
+        maxWidth: "280px",
+        lineHeight: 1.4,
+    }
+
+    // Tooltip arrow
+    const arrowStyle: React.CSSProperties = {
+        position: "absolute",
+        top: "-4px",
+        left: "12px",
+        width: "8px",
+        height: "8px",
+        backgroundColor: theme.tooltipBg,
+        transform: "rotate(45deg)",
+        borderTopLeftRadius: "2px",
+    }
+
+    const handleLabelClick = (e: React.MouseEvent) => {
+        if (config.tooltipTrigger === "click" && tooltipText) {
+            e.stopPropagation()
+            setTooltipVisible(!tooltipVisible)
+        }
+    }
+
+    // For hover mode, handle mouse events on the entire container
+    const containerHoverHandlers = config.tooltipTrigger === "hover" && tooltipText
+        ? {
+            onMouseEnter: () => setTooltipVisible(true),
+            onMouseLeave: () => setTooltipVisible(false),
+        }
+        : {}
+
+    // Close tooltip when clicking outside (for click mode)
+    React.useEffect(() => {
+        if (config.tooltipTrigger === "click" && tooltipVisible) {
+            const handleClickOutside = () => setTooltipVisible(false)
+            // Delay to prevent immediate close on the same click
+            const timer = setTimeout(() => {
+                document.addEventListener("click", handleClickOutside)
+            }, 0)
+            return () => {
+                clearTimeout(timer)
+                document.removeEventListener("click", handleClickOutside)
+            }
+        }
+    }, [config.tooltipTrigger, tooltipVisible])
+
     return (
-        <div className={className} style={getContainerStyle()} title={tooltip}>
-            <div style={labelStyle}>{label}</div>
+        <div
+            className={className}
+            style={getContainerStyle()}
+            {...containerHoverHandlers}
+        >
+            <div
+                style={labelStyle}
+                onClick={handleLabelClick}
+                role={config.tooltipTrigger === "click" && tooltipText ? "button" : undefined}
+                tabIndex={config.tooltipTrigger === "click" && tooltipText ? 0 : undefined}
+                onKeyDown={(e) => {
+                    if (config.tooltipTrigger === "click" && tooltipText && (e.key === "Enter" || e.key === " ")) {
+                        e.preventDefault()
+                        setTooltipVisible(!tooltipVisible)
+                    }
+                }}
+            >
+                {label}
+            </div>
+            {/* Custom tooltip */}
+            {tooltipText && (
+                <div style={tooltipStyle} role="tooltip" aria-hidden={!tooltipVisible}>
+                    <div style={arrowStyle} />
+                    {tooltipText}
+                </div>
+            )}
             {children}
         </div>
     )

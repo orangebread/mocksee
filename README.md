@@ -53,12 +53,29 @@ function App() {
     <MockMarkProvider 
       enabled={process.env.NODE_ENV === 'development'}
       defaultVariant="border"
+      tooltipTrigger="hover"
       theme={{ borderColor: '#8b5cf6' }}
     >
       <YourApp />
     </MockMarkProvider>
   )
 }
+```
+
+### Tooltip Trigger Modes
+
+MockMark displays the `reason` prop as an elegant tooltip. Choose how tooltips are triggered:
+
+- `hover` (default): Tooltip appears when hovering over the MockMark container
+- `click`: Tooltip appears when clicking the label badge (allows click-through to content beneath)
+
+```tsx
+// Click mode - great for touch devices or when content has hover interactions
+<MockMarkProvider tooltipTrigger="click">
+  <MockMark reason="Click the label to see this">
+    <YourComponent />
+  </MockMark>
+</MockMarkProvider>
 ```
 
 ### Variants
@@ -75,6 +92,8 @@ function App() {
 
 ## Props
 
+### MockMark Component
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | string | "MOCK" | Badge text |
@@ -82,6 +101,42 @@ function App() {
 | `variant` | 'border' \| 'badge' \| 'minimal' | 'border' | Visual style |
 | `disabled` | boolean | false | Force hide this instance |
 
+### MockMarkProvider
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `enabled` | boolean | true | Enable/disable all indicators |
+| `defaultVariant` | 'border' \| 'badge' \| 'minimal' | 'border' | Default visual style |
+| `tooltipTrigger` | 'hover' \| 'click' | 'hover' | How tooltips are triggered |
+| `theme` | MockMarkTheme | - | Custom styling |
+
+### Theme Options
+
+```tsx
+interface MockMarkTheme {
+  borderColor?: string      // Indicator border color
+  labelBg?: string          // Badge background color
+  labelColor?: string       // Badge text color
+  labelFontSize?: string    // Badge font size
+  tooltipBg?: string        // Tooltip background color
+  tooltipColor?: string     // Tooltip text color
+  tooltipFontSize?: string  // Tooltip font size
+}
+```
+
+## Demo
+
+See MockMark in action using the included demo app. It showcases all variants and usage patterns in a realistic React environment.
+
+![MockMark Demo Preview](assets/mock_demo.png)
+
+To run the demo locally:
+
+```bash
+npm run dev:example
+```
+
 ## License
 
 MIT
+
