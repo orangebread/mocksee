@@ -1,6 +1,6 @@
 {
     "name": "mockmark",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Development-only visual indicators for mock data in React applications",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
