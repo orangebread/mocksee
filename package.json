@@ -2,13 +2,29 @@
     "name": "mockmark",
     "version": "0.1.0",
     "description": "Development-only visual indicators for mock data in React applications",
-    "main": "src/index.ts",
-    "types": "src/index.ts",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        }
+    },
     "files": [
-        "src"
+        "dist",
+        "README.md"
     ],
     "scripts": {
-        "typecheck": "tsc --noEmit"
+        "build": "tsup",
+        "typecheck": "tsc --noEmit",
+        "prepublishOnly": "npm run build"
     },
     "peerDependencies": {
         "react": ">=18.0.0",
@@ -17,6 +33,7 @@
     "devDependencies": {
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
+        "tsup": "^8.0.0",
         "typescript": "^5.0.0"
     },
     "keywords": [
@@ -24,11 +41,15 @@
         "mock",
         "development",
         "debugging",
-        "visualization"
+        "visualization",
+        "indicator",
+        "mock-data"
     ],
+    "author": "jlee",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/your-org/mockmark"
-    }
+        "url": "https://github.com/jlee/mockmark"
+    },
+    "sideEffects": false
 }
